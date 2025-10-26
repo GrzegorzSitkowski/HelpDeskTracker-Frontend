@@ -1,22 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
-
-  imports:{
-    dirs: ['stores'],
+  devtools: { enabled: false },
+  ssr: false,
+	build: {
+    transpile: ['vuetify'],
   },
-
   modules: [
-    '@pinia/nuxt',
-    '@vueuse/nuxt',
-    'nuxt-lodash',
-    'dayjs-nuxt'
+    (_options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }))
+      })
+    },
+    //...
   ],
-
-  lodash: {
-    prefix: "_",
-    prefixSkip: false,
-    upperAfterPrefix: false,
+  vite: {
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
+    },
   },
 })
